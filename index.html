@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Comment Sentiment Analyzer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 40px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    canvas {
+      margin-top: 30px;
+    }
+    #results {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Comment Sentiment Analyzer</h1>
+  <div class="container">
+  <form id="analyzeForm">
+    <label for="videoUrl">YouTube Video URL:</label>
+    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+
+    <label for="commentCount">Number of Comments:</label>
+    <select id="commentCount">
+      <option>10</option>
+      <option>20</option>
+      <option>30</option>
+      <option>50</option>
+      <option>100</option>
+    </select>
+
+    <button type="submit" id="analyzeBtn">Analyze</button>
+  </form>
+
+  <div id="results"></div>
+  <canvas id="sentimentChart" width="400" height="300"></canvas>
+  
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
