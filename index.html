@@ -47,19 +47,23 @@
     <label for="videoUrl">YouTube Video URL:</label>
     <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
 
-    <label for="commentCount">Number of Comments:</label>
-    <select id="commentCount">
-      <option>10</option>
-      <option>20</option>
-      <option>30</option>
-      <option>50</option>
-      <option>100</option>
-    </select>
+    <label for="commentCount">Number of Comments: <span id="commentValue">50</span></label>
+    <input type="range" id="commentCount" min="1" max="100" value="50" step="1">
 
     <button type="submit" id="analyzeBtn">Analyze</button>
   </form>
 
   <div id="results"></div>
+  <div id="commentsSection" style="margin-top: 20px;">
+  <button onclick="toggleComments('Positive')">Show Positive Comments</button>
+  <button onclick="toggleComments('Neutral')">Show Neutral Comments</button>
+  <button onclick="toggleComments('Negative')">Show Negative Comments</button>
+
+  <div id="Positive" class="commentList" style="display:none; margin-top: 10px;"></div>
+  <div id="Neutral" class="commentList" style="display:none; margin-top: 10px;"></div>
+  <div id="Negative" class="commentList" style="display:none; margin-top: 10px;"></div>
+  </div>
+
   <canvas id="sentimentChart" width="400" height="300"></canvas>
   
   </div>

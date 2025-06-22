@@ -1,5 +1,9 @@
   async function analyze() {
     const url = document.getElementById('videoUrl').value.trim();
+
+    document.getElementById("commentCount").addEventListener("input", function () {
+        document.getElementById("commentValue").textContent = this.value;
+    });
     const count = document.getElementById('commentCount').value;
 
     let videoId = null;
@@ -49,10 +53,32 @@
 
       document.getElementById("results").innerText =
         `Positive: ${data.positive}, Neutral: ${data.neutral}, Negative: ${data.negative}`;
+
+      ["Positive", "Neutral", "Negative"].forEach(type => {
+        const container = document.getElementById(type);
+        container.innerHTML = ""; // clear previous
+        data.comments[type].forEach(comment => {
+            const p = document.createElement("p");
+            p.textContent = comment;
+            container.appendChild(p);
+        });
+      });
+
     } catch (err) {
       alert("Error contacting backend: " + err.message);
     }
   }
+
+function toggleComments(type) {
+  const types = ['Positive', 'Neutral', 'Negative'];
+  types.forEach(t => {
+    if (t !== type) {
+      document.getElementById(t).style.display = "none";
+    }
+  });
+  const section = document.getElementById(type);
+  section.style.display = section.style.display === "none" ? "block" : "none";
+}
 
 window.onload = function () {
   document.getElementById("analyzeForm").addEventListener("submit", async function(e) {

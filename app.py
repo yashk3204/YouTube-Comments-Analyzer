@@ -88,15 +88,16 @@ def analyze():
     try:
         comments = get_comments(video_id, count)
         cleaned = [clean_comment(c) for c in comments]
-        sentiments = [get_sentiment(c) for c in cleaned]
-        pos = sentiments.count("Positive")
-        neu = sentiments.count("Neutral")
-        neg = sentiments.count("Negative")
+        results = {"Positive": [], "Neutral": [], "Negative": []}
+        for raw, cleaned in zip(comments, cleaned):
+            sentiment = get_sentiment(cleaned)
+            results[sentiment].append(raw)
 
         return jsonify({
-            "positive": pos,
-            "neutral": neu,
-            "negative": neg,
+            "positive": len(results["Positive"]),
+            "neutral": len(results["Neutral"]),
+            "negative": len(results["Negative"]),
+            "comments": results
         })
 
     except Exception as e:
