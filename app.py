@@ -19,9 +19,19 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 sia = SentimentIntensityAnalyzer()
 english_stopwords = set(stopwords.words('english'))
 
-def get_comments(video_id, max_comments=100):
+def get_results(video_id, max_comments=100):
     comments = []
     next_page_token = None
+
+    video_response = youtube.videos().list(
+        part="snippet",
+        id=video_id
+    ).execute()
+
+    if not video_response["items"]:
+        raise ValueError("Video not found")
+
+    title = video_response["items"][0]["snippet"]["title"]
 
     while len(comments) < max_comments:
         response = youtube.commentThreads().list(
@@ -40,7 +50,7 @@ def get_comments(video_id, max_comments=100):
         if not next_page_token:
             break
 
-    return comments
+    return title, comments
 
 def clean_comment(text):
     text = re.sub(r"http\S+", "", text)  # remove links
@@ -86,7 +96,7 @@ def analyze():
     count = int(data.get("count", 50))
 
     try:
-        comments = get_comments(video_id, count)
+        title, comments = get_results(video_id, count)
         cleaned = [clean_comment(c) for c in comments]
         results = {"Positive": [], "Neutral": [], "Negative": []}
         for raw, cleaned in zip(comments, cleaned):
@@ -94,6 +104,7 @@ def analyze():
             results[sentiment].append(raw)
 
         return jsonify({
+            "title": title,
             "positive": len(results["Positive"]),
             "neutral": len(results["Neutral"]),
             "negative": len(results["Negative"]),

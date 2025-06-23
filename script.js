@@ -51,8 +51,10 @@
         }
       });
 
-      document.getElementById("results").innerText =
-        `Positive: ${data.positive}, Neutral: ${data.neutral}, Negative: ${data.negative}`;
+      document.getElementById("results").innerHTML = `
+        <h3>Video Title: ${data.title}</h3>
+        <p>Positive: ${data.positive}, Neutral: ${data.neutral}, Negative: ${data.negative}</p>
+      `;
 
       ["Positive", "Neutral", "Negative"].forEach(type => {
         const container = document.getElementById(type);
