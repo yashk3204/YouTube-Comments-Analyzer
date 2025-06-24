@@ -2,71 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>YouTube Comment Sentiment Analyzer</title>
+  <title>YouTube Comments: Sentiment Analyzer</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
+
     h1 {
       text-align: center;
+      color: white;
+      margin-top: 40px;
     }
+
     .container {
-      max-width: 600px;
-      margin: auto;
+      max-width: 700px;
+      margin: 30px auto;
       background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
+
+    .container img {
+      max-height: 120px;
+      object-fit: cover;
+    }
+
     label {
       display: block;
-      margin: 15px 0 5px;
+      margin: 20px 0 8px;
+      font-weight: 600;
+      color: #444;
     }
-    input, select, button {
+
+    input[type="text"], input[type="range"], select, button {
       width: 100%;
-      padding: 10px;
+      padding: 10px 14px;
       margin-top: 5px;
       font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
+
+    input[type="range"] {
+      accent-color: #764ba2;
+    }
+
+    button {
+      margin-top: 25px;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #5563e1, #6c3f9e);
+    }
+
     canvas {
+      margin-top: 40px;
+    }
+
+    #results {
+      margin-top: 25px;
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    #commentsSection {
       margin-top: 30px;
     }
-    #results {
-      margin-top: 20px;
-      font-weight: bold;
+
+    .commentList {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 6px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-size: 15px;
+    }
+
+    .commentList p {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+      margin: 0;
+    }
+
+    .commentList p:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-buttons button {
+      width: auto;
+      margin-right: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>YouTube Comment Sentiment Analyzer</h1>
+  <h1>YouTube Comments: Sentiment Analyzer</h1>
   <div class="container">
-  <form id="analyzeForm">
-    <label for="videoUrl">YouTube Video URL:</label>
-    <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+    <form id="analyzeForm">
+      <label for="videoUrl">Enter any YouTube Video URL:</label>
+      <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
 
-    <label for="commentCount">Number of Comments: <span id="commentValue">50</span></label>
-    <input type="range" id="commentCount" min="1" max="100" value="50" step="1">
+      <label for="commentCount">Number of Comments to Analyze: <span id="commentValue">50</span></label>
+      <input type="range" id="commentCount" min="1" max="100" value="50" step="1">
 
-    <button type="submit" id="analyzeBtn">Analyze</button>
-  </form>
+      <button type="submit" id="analyzeBtn">Analyze</button>
+    </form>
 
-  <div id="results"></div>
-  <div id="commentsSection" style="margin-top: 20px;">
-  <button onclick="toggleComments('Positive')">Show Positive Comments</button>
-  <button onclick="toggleComments('Neutral')">Show Neutral Comments</button>
-  <button onclick="toggleComments('Negative')">Show Negative Comments</button>
+    <div id="results"></div>
 
-  <div id="Positive" class="commentList" style="display:none; margin-top: 10px;"></div>
-  <div id="Neutral" class="commentList" style="display:none; margin-top: 10px;"></div>
-  <div id="Negative" class="commentList" style="display:none; margin-top: 10px;"></div>
+    <div id="commentsSection">
+      <div class="toggle-buttons">
+        <button type="button" onclick="toggleComments('Positive')">Show Positive Comments</button>
+        <button type="button" onclick="toggleComments('Neutral')">Show Neutral Comments</button>
+        <button type="button" onclick="toggleComments('Negative')">Show Negative Comments</button>
+      </div>
+
+      <div id="Positive" class="commentList" style="display:none;"></div>
+      <div id="Neutral" class="commentList" style="display:none;"></div>
+      <div id="Negative" class="commentList" style="display:none;"></div>
+    </div>
+
+    <canvas id="sentimentChart" width="400" height="300"></canvas>
   </div>
 
-  <canvas id="sentimentChart" width="400" height="300"></canvas>
-  
-  </div>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5501"])
@@ -31,7 +31,10 @@ def get_results(video_id, max_comments=100):
     if not video_response["items"]:
         raise ValueError("Video not found")
 
-    title = video_response["items"][0]["snippet"]["title"]
+    snippet = video_response["items"][0]["snippet"]
+    title = snippet["title"]
+    channel = snippet["channelTitle"]
+    thumbnail = snippet["thumbnails"]["medium"]["url"]
 
     while len(comments) < max_comments:
         response = youtube.commentThreads().list(
@@ -50,7 +53,7 @@ def get_results(video_id, max_comments=100):
         if not next_page_token:
             break
 
-    return title, comments
+    return title, channel, thumbnail, comments
 
 def clean_comment(text):
     text = re.sub(r"http\S+", "", text)  # remove links
@@ -96,7 +99,7 @@ def analyze():
     count = int(data.get("count", 50))
 
     try:
-        title, comments = get_results(video_id, count)
+        title, channel, thumbnail, comments = get_results(video_id, count)
         cleaned = [clean_comment(c) for c in comments]
         results = {"Positive": [], "Neutral": [], "Negative": []}
         for raw, cleaned in zip(comments, cleaned):
@@ -105,6 +108,8 @@ def analyze():
 
         return jsonify({
             "title": title,
+            "channel": channel,
+            "thumbnail": thumbnail,
             "positive": len(results["Positive"]),
             "neutral": len(results["Neutral"]),
             "negative": len(results["Negative"]),
@@ -113,6 +118,14 @@ def analyze():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/")
+def serve_index():
+    return send_from_directory('.', 'index.html')
+
+@app.route("/<path:path>")
+def serve_static_file(path):
+    return send_from_directory('.', path)
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)

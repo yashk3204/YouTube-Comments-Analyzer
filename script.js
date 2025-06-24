@@ -52,8 +52,15 @@
       });
 
       document.getElementById("results").innerHTML = `
-        <h3>Video Title: ${data.title}</h3>
-        <p>Positive: ${data.positive}, Neutral: ${data.neutral}, Negative: ${data.negative}</p>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <img src="${data.thumbnail}" alt="Thumbnail" style="width: 120px; border-radius: 8px;">
+          <div>
+            <h3 style="margin: 0;">${data.title}</h3>
+            <p style="margin: 4px 0;">Channel: <strong>${data.channel}</strong></p>
+            <p>👍 ${data.positive} | 😐 ${data.neutral} | 👎 ${data.negative}</p>
+          </div>
+        </div>
+        <p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">🔗 Watch Video</a></p>
       `;
 
       ["Positive", "Neutral", "Negative"].forEach(type => {
