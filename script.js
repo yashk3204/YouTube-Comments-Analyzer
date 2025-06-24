@@ -1,9 +1,5 @@
   async function analyze() {
     const url = document.getElementById('videoUrl').value.trim();
-
-    document.getElementById("commentCount").addEventListener("input", function () {
-        document.getElementById("commentValue").textContent = this.value;
-    });
     const count = document.getElementById('commentCount').value;
 
     let videoId = null;
@@ -20,7 +16,7 @@
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/analyze`, {
+      const response = await fetch(`https://ytca-backend.onrender.com/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ videoId, count: parseInt(count) })
@@ -65,7 +61,7 @@
 
       ["Positive", "Neutral", "Negative"].forEach(type => {
         const container = document.getElementById(type);
-        container.innerHTML = ""; // clear previous
+        container.innerHTML = "";
         data.comments[type].forEach(comment => {
             const p = document.createElement("p");
             p.textContent = comment;
@@ -90,6 +86,10 @@ function toggleComments(type) {
 }
 
 window.onload = function () {
+  document.getElementById("commentCount").addEventListener("input", function () {
+      document.getElementById("commentValue").textContent = this.value;
+  });
+
   document.getElementById("analyzeForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     await analyze();

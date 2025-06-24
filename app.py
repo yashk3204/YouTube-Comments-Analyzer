@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5501"])
+CORS(app)
 
 from googleapiclient.discovery import build
 import re
@@ -118,14 +118,6 @@ def analyze():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route("/")
-def serve_index():
-    return send_from_directory('.', 'index.html')
-
-@app.route("/<path:path>")
-def serve_static_file(path):
-    return send_from_directory('.', path)
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)
