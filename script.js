@@ -2,6 +2,9 @@
     const url = document.getElementById('videoUrl').value.trim();
     const count = document.getElementById('commentCount').value;
 
+    document.getElementById("summarizeBtn").style.display = "none";
+    document.getElementById("summaries").innerHTML = "";
+
     let videoId = null;
     try {
       const parsedUrl = new URL(url);
@@ -56,7 +59,6 @@
             <p>👍 ${data.positive} | 😐 ${data.neutral} | 👎 ${data.negative}</p>
           </div>
         </div>
-        <p><a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">🔗 Watch Video</a></p>
       `;
 
       ["Positive", "Neutral", "Negative"].forEach(type => {
@@ -72,7 +74,86 @@
     } catch (err) {
       alert("Error contacting backend: " + err.message);
     }
+
+    document.getElementById("summarizeBtn").style.display = "block";
   }
+
+async function summarize() {
+  const positive = Array.from(document.getElementById("Positive").children).map(p => p.textContent);
+  const negative = Array.from(document.getElementById("Negative").children).map(p => p.textContent);
+
+  const title = document.querySelector("#results h3")?.innerText || "";
+  const channel = document.querySelector("#results strong")?.innerText || "";
+
+  document.getElementById("summaries").innerHTML = "Summarizing…";
+
+  try {
+    const response = await fetch("https://ytca-backend.onrender.com/summarize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        positive_comments: positive,
+        negative_comments: negative,
+        title,
+        channel
+      })
+    });
+
+    const data = await response.json();
+    const formattedPositiveSummary = formatText(data.positiveSummary);
+    const formattedNegativeSummary = formatText(data.negativeSummary);
+    document.getElementById("summaries").innerHTML = `
+      <div style="background:#f6f7fb;padding:16px;border-radius:6px;margin-bottom:12px;">
+        <strong>📈 Positive Comments Summary:</strong>
+        <p>${formattedPositiveSummary}</p>
+      </div>
+      <div style="background:#f6f7fb;padding:16px;border-radius:6px;">
+        <strong>📉 Negative Comments Summary:</strong>
+        <p>${formattedNegativeSummary}</p>
+      </div>
+    `;
+  } catch (err) {
+    document.getElementById("summaries").innerHTML = "Error summarizing comments: " + err.message;
+  }
+}
+
+function formatText(str) {
+    str = str.replace(/\[\d+\]/g, ''); // removing references
+    let boldProcessed = '';
+    let boldParts = str.split('**'); // ** for bold
+    for (let i = 0; i < boldParts.length; i++) {
+        boldProcessed += (i % 2 === 0) ? boldParts[i] : `<b>${boldParts[i]}</b>`;
+    }
+    let italicProcessed = '';
+    let italicParts = boldProcessed.split('*'); // * for italics
+    for (let i = 0; i < italicParts.length; i++) {
+        italicProcessed += (i % 2 === 0) ? italicParts[i] : `<i>${italicParts[i]}</i>`;
+    }
+    const lines = italicProcessed.split('\n');
+    let inList = false;
+    let formatted = '';
+
+    for (let line of lines) {
+        if (line.trim().startsWith('- ')) { // - for bullet points
+            if (!inList) {
+                formatted += '<ul>\n';
+                inList = true;
+            }
+            formatted += `  <li>${line.trim().slice(2)}</li>\n`;
+        } else {
+            if (inList) {
+                formatted += '</ul>\n';
+                inList = false;
+            }
+            formatted += `${line}\n`;
+        }
+    }
+    if (inList) {
+        formatted += '</ul>\n';
+    }
+    return formatted.trim();
+}
+
 
 function toggleComments(type) {
   const types = ['Positive', 'Neutral', 'Negative'];
@@ -95,4 +176,9 @@ window.onload = function () {
     await analyze();
     return false;
   });
+
+  document.getElementById("summarizeBtn").addEventListener("click", async function() {
+    await summarize();
+  });
+
 };

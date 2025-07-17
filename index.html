@@ -112,6 +112,18 @@
       padding: 8px 12px;
     }
 
+    .summary-heading {
+      margin-top: 1em;
+      font-weight: bold;
+      font-size: 1.08em;
+      color: #764ba2;
+    }
+    .summary-detail {
+      margin-left: 1em;
+      margin-bottom: 0.8em;
+      color: #222;
+    }
+
     @media (max-width: 600px) {
       .container {
         padding: 20px;
@@ -144,6 +156,11 @@
       <div id="Positive" class="commentList" style="display:none;"></div>
       <div id="Neutral" class="commentList" style="display:none;"></div>
       <div id="Negative" class="commentList" style="display:none;"></div>
+    </div>
+
+    <div id="summarizeSection" style="margin-top: 30px;">
+      <button id="summarizeBtn" style="display:none; width:100%;">🧠 Summarize Comments</button>
+      <div id="summaries" style="margin-top:20px;"></div>
     </div>
 
     <canvas id="sentimentChart" width="400" height="300"></canvas>
