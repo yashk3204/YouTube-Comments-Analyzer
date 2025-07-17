@@ -100,8 +100,10 @@ async function summarize() {
     });
 
     const data = await response.json();
-    const formattedPositiveSummary = formatText(data.positiveSummary);
-    const formattedNegativeSummary = formatText(data.negativeSummary);
+    let formattedPositiveSummary = "No positive comments, looks like it's a bad video!";
+    let formattedNegativeSummary = "No negative comments, looks like it's a great video!";
+    if(data.positiveSummary.length != 0) formattedPositiveSummary = formatText(data.positiveSummary);
+    if(data.negativeSummary.length != 0) formattedNegativeSummary = formatText(data.negativeSummary);
     document.getElementById("summaries").innerHTML = `
       <div style="background:#f6f7fb;padding:16px;border-radius:6px;margin-bottom:12px;">
         <strong>📈 Positive Comments Summary:</strong>
